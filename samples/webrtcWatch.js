@@ -41,51 +41,49 @@ export default WebRTCWatch = _ => {
   const watch = _ => {
     socket = io('https://lyb-streaming.herokuapp.com'); // http://192.168.xxx.xxx:3000 run cmd command ipconfig
 
-    socket.on('connect', _ => {
-      socket.emit('watcher'); 
-    });
+    socket
+      .on('connect', _ => {
+        socket.emit('watcher'); 
+      })
+      .on('offer', async (id, desc) => {
+        try {
+          peer = new RTCPeerConnection(config);
 
-    socket.on('offer', async (id, desc) => {
-      try {
-        peer = new RTCPeerConnection(config);
+          peer
+            .setRemoteDescription(new RTCSessionDescription(desc))
+            .then(_ => peer.createAnswer())
+            .then(sdp => peer.setLocalDescription(sdp))
+            .then(_ => { 
+              socket.emit('answer', id, peer.localDescription); 
+            });
 
-        peer
-          .setRemoteDescription(new RTCSessionDescription(desc))
-          .then(_ => peer.createAnswer())
-          .then(sdp => peer.setLocalDescription(sdp))
-          .then(_ => { 
-            socket.emit('answer', id, peer.localDescription); 
-          });
+          peer.onicecandidate = e => {
+            if (e.candidate) {
+              socket.emit('candidate', id, e.candidate);
+            }
+          }; 
 
-        peer.onicecandidate = e => {
-          if (e.candidate) {
-            socket.emit('candidate', id, e.candidate);
-          }
-        }; 
-
-        // onaddstream is equivalent to ontrack 
-        peer.onaddstream = e => { 
-          if (e.stream && remoteStream !== e.stream) {
-            setRemoteStream(e.stream);
-          }
-        };  
-      } catch (e) {
-        console.error(e);
-      }
-    });
-
-    socket.on('candidate', (id, candidate) => {
-      try {
-        peer.addIceCandidate(new RTCIceCandidate(candidate));
-      } catch (err) {
-        console.log('Error adding iceCandidate', err);
-      }
-    }); 
-
-    socket.on('disconnect', _ => {
-      peer.close();
-      socket.disconnect(true);
-    });
+          // onaddstream is equivalent to ontrack 
+          peer.onaddstream = e => { 
+            if (e.stream && remoteStream !== e.stream) {
+              setRemoteStream(e.stream);
+            }
+          };  
+        } catch (e) {
+          console.error(e);
+        }
+      })
+      .on('candidate', (id, candidate) => {
+        try {
+          peer.addIceCandidate(new RTCIceCandidate(candidate));
+        } catch (err) {
+          console.log('Error adding iceCandidate', err);
+        }
+      })
+      .on('disconnect', _ => {
+        peer.close();
+        socket.disconnect(true);
+      });
   };
 
   return (
