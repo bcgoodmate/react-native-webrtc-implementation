@@ -15,6 +15,7 @@
     + setLocalDescription then emit answer
     + onaddstream
     + onicecandidate
+  - socket on candidate
 */
 
 import React, {useState} from 'react';
