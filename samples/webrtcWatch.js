@@ -17,7 +17,7 @@
     + onicecandidate
 */
 
-import React, {useRef, useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import {View, TouchableOpacity, Text} from 'react-native';
 import {RTCPeerConnection, RTCSessionDescription, RTCIceCandidate, RTCView} from 'react-native-webrtc';
 import io from 'socket.io-client';
@@ -34,7 +34,7 @@ export default WebRTCWatch = _ => {
   const [remoteStream, setRemoteStream] = useState();
  
   const watch = _ => {
-    socket = io('https://lyb-streaming.herokuapp.com'); // https://lyb-streaming.herokuapp.com or http://192.168.xxx.xxx:3000 run cmd command ipconfig
+    socket = io('https://lyb-streaming.herokuapp.com'); // http://192.168.xxx.xxx:3000 run cmd command ipconfig
 
     socket.on('connect', _ => {
       socket.emit('watcher'); 
