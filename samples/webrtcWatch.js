@@ -16,12 +16,16 @@
     + onaddstream
     + onicecandidate
   - socket on candidate
+  - socket on disconnect
 */
 
 import React, {useState} from 'react';
-import {View, TouchableOpacity, Text} from 'react-native';
+import {StyleSheet, Dimensions, View, TouchableOpacity, Text} from 'react-native';
 import {RTCPeerConnection, RTCSessionDescription, RTCIceCandidate, RTCView} from 'react-native-webrtc';
 import io from 'socket.io-client';
+
+const screenWidth = Dimensions.get('window').width;
+const screenHeight = Dimensions.get('window').height;
 
 export default WebRTCWatch = _ => {  
   let peer, socket;
@@ -77,12 +81,31 @@ export default WebRTCWatch = _ => {
         console.log('Error adding iceCandidate', err);
       }
     }); 
+
+    socket.on('disconnect', _ => {
+      peer.close();
+      socket.disconnect(true);
+    });
   };
 
   return (
     <View style={{flex: 1}}>
       <TouchableOpacity onPress={watch}><Text>Watch Live Streaming</Text></TouchableOpacity>
-      {remoteStream && <RTCView style={{width: '100%', height: '100%'}} zIndex={0} streamURL={remoteStream.toURL()} />} 
+      {remoteStream && <RTCView 
+        zIndex={0} 
+        streamURL={remoteStream.toURL()}
+        objectFit={'cover'} 
+        style={styles.fullScreen} />} 
     </View> 
   );
 }
+
+const styles = StyleSheet.create({
+  fullScreen: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: screenWidth, 
+    height: screenHeight 
+  }
+});
