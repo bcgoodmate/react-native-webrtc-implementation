@@ -19,8 +19,8 @@
   - socket on disconnect
 */
 
-import React, {useState} from 'react';
-import {StyleSheet, Dimensions, View, TouchableOpacity, Text} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {StyleSheet, Dimensions, View} from 'react-native';
 import {RTCPeerConnection, RTCSessionDescription, RTCIceCandidate, RTCView} from 'react-native-webrtc';
 import io from 'socket.io-client';
 
@@ -38,7 +38,7 @@ export default WebRTCWatch = _ => {
    
   const [remoteStream, setRemoteStream] = useState();
  
-  const watch = _ => {
+  useEffect(_ => {
     socket = io('http://192.168.xxx.xxx:3000'); 
     socket
       .on('connect', _ => socket.emit('watcher'))
@@ -57,11 +57,10 @@ export default WebRTCWatch = _ => {
         peer.close();
         socket.disconnect(true);
       });
-  };
+  }, []);
 
   return (
     <View style={{flex: 1}}>
-      <TouchableOpacity onPress={watch}><Text>Watch Live Streaming</Text></TouchableOpacity>
       {remoteStream && <RTCView 
         zIndex={0} 
         streamURL={remoteStream.toURL()}
