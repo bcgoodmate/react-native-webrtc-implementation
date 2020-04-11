@@ -65,7 +65,7 @@ export default WebRTCWatch = _ => {
         zIndex={0} 
         streamURL={remoteStream.toURL()}
         objectFit={'cover'} 
-        style={styles.fullScreen} />} 
+        style={styles.fullScreen} />}  
     </View> 
   );
 }

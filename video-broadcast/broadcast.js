@@ -50,7 +50,7 @@ export default WebRTCBroadcast = _ => {
       })
       .on('disconnectPeer', id => {
         const client = clients[id];
-
+ 
         if(client) {
           client.close();
           delete clients[id];
