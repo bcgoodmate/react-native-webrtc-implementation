@@ -16,7 +16,7 @@
     + onaddstream
     + onicecandidate
   - socket on candidate
-  - socket on disconnect
+  - socket on disconnectPeer
 */
 
 import React, {useEffect, useState} from 'react';
@@ -53,7 +53,7 @@ export default WebRTCWatch = _ => {
         peer.onaddstream = e => e.stream && remoteStream !== e.stream && setRemoteStream(e.stream); 
       })
       .on('candidate', (id, candidate) => peer.addIceCandidate(new RTCIceCandidate(candidate)))
-      .on('disconnect', _ => {
+      .on('disconnectPeer', _ => {
         peer.close();
         socket.disconnect(true);
       });
