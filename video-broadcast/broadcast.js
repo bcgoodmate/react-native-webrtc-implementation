@@ -51,8 +51,9 @@
        .on('watcher', id => {
          peer = new RTCPeerConnection(config);
          clients[id] = peer;
-         peer.addStream(stream); 
+         peer; 
          peer
+           .addStream(stream)
            .createOffer()
            .then(sdp => peer.setLocalDescription(sdp))
            .then(_ => socket.emit('offer', id, peer.localDescription));
