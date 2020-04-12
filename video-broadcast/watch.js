@@ -14,7 +14,7 @@
     + createAnswer
     + setLocalDescription then emit answer
     + onaddstream
-    + onicecandidate
+    + onicecandidate then emit candidate
   - socket on candidate
   - socket on disconnectPeer
 */
